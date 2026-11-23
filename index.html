@@ -2,6 +2,9 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#F2F5F3" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0F1514" media="(prefers-color-scheme: dark)">
+<script>if(!window.URLSearchParams||!window.Promise||!Array.prototype.map||!Array.prototype.forEach){document.documentElement.className+=" old"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>勞報單試算｜扣繳稅額、二代健保、實領金額與可列印勞務報酬單</title>
 <meta name="description" content="輸入金額與所得類別，三秒算出代扣所得稅、二代健保補充保費與實領金額，支援反推報價與自動產生含中文大寫金額的 A4 可列印勞務報酬單。適用 115 年度規定。">
@@ -119,6 +122,14 @@ details.cv svg{width:100%;height:auto;display:block;margin-top:10px}details.cv p
 .btw{overflow-x:auto;border:1px solid var(--ln);border-radius:12px;margin-top:14px}.btw table{border-collapse:collapse;width:100%;min-width:460px;font-variant-numeric:tabular-nums;font-size:14.5px}
 .btw th,.btw td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--ln)}.btw th:first-child,.btw td:first-child{text-align:left}.btw thead th{background:var(--acb)}.btw tfoot td{font-weight:700;border-bottom:0}
 .btacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btacts button{width:auto}
+.oldmsg{display:none;background:#FFF4D9;color:#6B4500;padding:12px 16px;text-align:center;font-size:15px}.old .oldmsg{display:block}
+input[type=radio]{top:0;left:0}
+.hist{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:13px;color:var(--mu)}.hist:empty{display:none}
+.modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.modal[hidden]{display:none}.mbox{background:var(--sf);border-radius:14px;padding:16px;max-width:520px;width:100%;max-height:100%;overflow:auto;text-align:center}
+.mbox img{width:100%;height:auto;border:1px solid var(--ln);border-radius:8px;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}.mbox p{font-size:14px;color:var(--mu);margin:10px 0}.mbox .dl{display:inline-block;margin:0 6px 6px 0;background:var(--ac);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:700;text-decoration:none}
+@media(max-width:820px){.f input,.f select,textarea,.amt input,input:not([type=radio]):not([type=checkbox]){font-size:16px!important}}
+@media(pointer:coarse){button,.opt{min-height:44px}button.ex{padding:9px 14px}.chk input{width:22px;height:22px}}
 @page{margin:14mm}
 @media print{
   :root,:root[data-theme="dark"]{--bg:#fff;--sf:#fff;--ink:#111;--mu:#444;--ln:#bbb;--ac:#1F5C4D;--acb:#F3F7F5;--seal:#B9302A;color-scheme:light}
@@ -135,6 +146,9 @@ details.cv svg{width:100%;height:auto;display:block;margin-top:10px}details.cv p
 </style>
 </head>
 <body>
+<div class="modal" id="imgm" hidden role="dialog" aria-modal="true" aria-label="勞報單圖片"><div class="mbox"><img id="mimg" alt="勞務報酬單圖片"><p>手機請長按圖片儲存或分享；電腦可按「下載圖片」。為保護個資，圖片版不含身分證字號與匯款帳號。</p><a class="dl" id="mdl" download="勞務報酬單.png">下載圖片</a><button type="button" class="sec" id="mx">關閉</button></div></div>
+<noscript><div class="oldmsg" style="display:block">此工具需要 JavaScript 才能計算，請在瀏覽器設定中開啟 JavaScript。</div></noscript>
+<div class="oldmsg">您的瀏覽器版本太舊，部分功能可能無法使用。請更新瀏覽器，或改用最新版 Chrome、Safari、Edge、Firefox。</div>
 <div class="wrap">
 <nav class="topbar" aria-label="主導覽">
   <a class="brand" href="index.html"><i>勞</i><span>勞報單試算</span></a>
@@ -189,6 +203,7 @@ details.cv svg{width:100%;height:auto;display:block;margin-top:10px}details.cv p
 <div class="note" id="warn"></div>
 <div class="tip" id="cliffTip"></div>
 <details class="cv"><summary>看實領曲線：為什麼金額會「跳水」</summary><svg id="cv" viewBox="0 0 320 150" role="img" aria-label="給付總額與實領金額關係圖"></svg><p>紅點是你目前的金額。曲線在 20,000 元與 20,010 元之間往下掉，是因為所得稅與補充保費的起扣點。</p></details>
+<div class="hist" id="hist"></div>
 </div>
 </section>
 
@@ -228,6 +243,8 @@ details.cv svg{width:100%;height:auto;display:block;margin-top:10px}details.cv p
   <button type="button" class="sec" id="cp">複製試算明細</button>
   <button type="button" class="sec" id="cpl">複製分享連結</button>
   <button type="button" class="sec" id="cpq">複製給客戶的報價說明</button>
+  <button type="button" class="sec" id="png">存成圖片（適合 LINE 傳送）</button>
+  <button type="button" class="sec" id="shr" hidden>分享報價</button>
 </div>
 </aside>
 </div>
@@ -432,7 +449,7 @@ function copyText(text,btn,orig){
 }
 function fallbackCopy(text,btn,orig){
   var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
-  document.body.appendChild(ta);ta.select();
+  document.body.appendChild(ta);ta.select();try{ta.setSelectionRange(0,99999)}catch(e){}
   try{document.execCommand("copy");flashBtn(btn,"已複製 ✓",orig)}catch(e){flashBtn(btn,"請手動複製",orig)}
   document.body.removeChild(ta);
 }
@@ -501,6 +518,40 @@ $("#btRun").onclick=function(){
  $("#btCsv").onclick=function(){var csv="\ufeff"+all.map(function(r){return r.map(function(v){return'"'+String(v).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n");
   var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="勞報單批次試算.csv";document.body.appendChild(a);a.click();a.remove()};
 };
+
+var inApp=/Line\/|FBAN|FBAV|Instagram|MicroMessenger|Messenger/i.test(navigator.userAgent);
+$("#pr").onclick=function(){if(inApp)flashBtn(this,"App 內建瀏覽器可能無法列印，請改存成圖片","列印／存成 PDF");try{window.print()}catch(e){}};
+function qtext(){var r=window._r;return r?"報價說明\n所得類別："+r.tName+"\n給付總額："+fmt(r.g)+"\n代扣所得稅："+fmt(r.tax)+"\n二代健保補充保費："+fmt(r.nhi)+"\n實領金額："+fmt(r.net)+"\n※ 依 115 年度規則試算，實際以付款單位扣繳為準。":""}
+if(navigator.share){var sb=$("#shr");sb.hidden=false;sb.onclick=function(){var s=qtext();if(!s)return;navigator.share({title:"勞報單試算",text:s,url:location.href.split("#")[0]}).catch(function(){})}}
+function slipPNG(){
+ var rows=[];
+ document.querySelectorAll("#slip .f").forEach(function(f){var s=f.querySelector("span"),lab=s?s.textContent.trim():"",el=f.querySelector("input,select,b");if(!el)return;
+  var v=(el.tagName==="B"?el.textContent:el.value||"").trim();if(v&&!/身分證|帳號/.test(lab))rows.push([lab,v])});
+ var W=760,S=2,H=Math.max(600,230+rows.length*50+120),c=document.createElement("canvas");c.width=W*S;c.height=H*S;
+ var x=c.getContext("2d"),F='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';x.scale(S,S);
+ x.fillStyle="#fff";x.fillRect(0,0,W,H);x.fillStyle="#1F5C4D";x.fillRect(0,0,W,8);
+ x.fillStyle="#17211F";x.textAlign="center";x.font="900 32px "+F;x.fillText("勞務報酬單",W/2,70);
+ x.textAlign="left";var y=120;
+ rows.forEach(function(r){x.fillStyle="#5A6A66";x.font="500 16px "+F;x.fillText(r[0],40,y);x.fillStyle="#17211F";x.font="500 19px "+F;x.fillText(r[1],170,y,W-210);
+  x.strokeStyle="#D8E0DC";x.beginPath();x.moveTo(40,y+16);x.lineTo(W-40,y+16);x.stroke();y+=50});
+ var q=window._r;if(q){x.fillStyle="#E3F0EB";x.fillRect(40,y+4,W-80,64);x.fillStyle="#17211F";x.font="700 18px "+F;x.fillText("實領金額（淨額）",58,y+44);
+  x.fillStyle="#1F5C4D";x.textAlign="right";x.font="900 30px "+F;x.fillText(fmt(q.net),W-58,y+48);x.textAlign="left";y+=90}
+ x.fillStyle="#5A6A66";x.font="400 13px "+F;x.textAlign="left";x.fillText("由「勞報單試算」產生，依 115 年度規則試算，僅供參考。",40,H-24);
+ return c.toDataURL("image/png")}
+$("#png").onclick=function(){if(!window._r){flashBtn(this,"請先輸入金額","存成圖片（適合 LINE 傳送）");return}
+ var u=slipPNG();$("#mimg").src=u;$("#mdl").href=u;$("#imgm").hidden=false;$("#mx").focus()};
+function closeM(){$("#imgm").hidden=true}
+$("#mx").onclick=closeM;$("#imgm").onclick=function(e){if(e.target===this)closeM()};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"||e.keyCode===27)closeM()});
+var HK="lb_hist",ht;
+function histGet(){try{return JSON.parse(LS.get(HK)||"[]")}catch(e){return[]}}
+function histRender(){var a=histGet(),o=$("#hist");o.innerHTML="";if(!a.length)return;
+ var l=document.createElement("span");l.textContent="最近試算：";o.appendChild(l);
+ a.forEach(function(it){var b=document.createElement("button");b.type="button";b.className="ex";b.textContent=it.t+"・"+it.g.toLocaleString("zh-TW")+" → "+it.net.toLocaleString("zh-TW");
+  b.onclick=function(){var q=function(n,v){var e=document.querySelector("input[name="+n+"][value='"+v+"']");if(e)e.checked=true};q("t",it.t);q("r",it.r);q("m","g");inp.value=it.g.toLocaleString("zh-TW");run()};o.appendChild(b)});
+ var c=document.createElement("button");c.type="button";c.className="ex";c.textContent="清除";c.onclick=function(){LS.del(HK);histRender()};o.appendChild(c)}
+inp.addEventListener("input",function(){clearTimeout(ht);ht=setTimeout(function(){var r=window._r;if(!r)return;var t=val("t"),rs=val("r"),a=histGet().filter(function(i){return!(i.t===t&&i.r===rs&&i.g===r.g)});a.unshift({t:t,r:rs,g:r.g,net:r.net});LS.set(HK,JSON.stringify(a.slice(0,5)));histRender()},1500)});
+histRender();
 
 var d=new Date();
 $("#dt").value="民國 "+(d.getFullYear()-1911)+" 年 "+(d.getMonth()+1)+" 月 "+d.getDate()+" 日";
