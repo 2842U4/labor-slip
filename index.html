@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>勞報單試算｜扣繳稅額、二代健保、實領金額與可列印勞務報酬單</title>
+<meta name="description" content="輸入金額與所得類別，三秒算出代扣所得稅、二代健保補充保費與實領金額，支援反推報價與自動產生含中文大寫金額的 A4 可列印勞務報酬單。適用 115 年度規定。">
+<meta property="og:title" content="勞報單試算｜扣繳稅額、二代健保、實領金額一次算好">
+<meta property="og:description" content="免註冊、資料不離開瀏覽器。支援正算實領、反推報價、中文大寫金額與一鍵列印正式勞務報酬單。">
+<meta property="og:type" content="website">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "勞報單是什麼？", "acceptedAnswer": {"@type": "Answer", "text": "公司付款給無法開發票的個人（自由工作者、外包人員、兼職人員）時，用來記錄給付金額、扣繳稅額與補充保費的憑證。公司靠它列報費用，領款人靠它報稅。"}}, {"@type": "Question", "name": "9A 和 9B 要怎麼選？", "acceptedAnswer": {"@type": "Answer", "text": "9A 是憑專業技能獨立接案，例如設計、翻譯、工程；9B 是稿費、版稅、單次講演費等。9B 在隔年報稅時有每年 18 萬元免稅額，但類別必須依實際性質認定，不能為了節稅亂填，被查核到可能要補稅。"}}, {"@type": "Question", "name": "為什麼起扣點是 20,010 元，不是 20,000 元？", "acceptedAnswer": {"@type": "Answer", "text": "規定是應扣繳稅額不超過 2,000 元可免扣。給付 20,000 元時稅額剛好 2,000 元，免扣；到 20,010 元稅額是 2,001 元，就必須扣。補充保費的門檻另外計算，是 20,000 元。所以在這個金額附近，多收 10 元實領可能反而變少，上面的範例按鈕可以直接看到差別。"}}, {"@type": "Question", "name": "報價和實領差很多，怎麼跟對方談？", "acceptedAnswer": {"@type": "Answer", "text": "報價時就講清楚是含稅還是未稅。如果你想實拿固定金額，把上方改成「想實拿這個數」，工具會反推公司要開多少給付額，並可直接複製分享連結傳給客戶確認。"}}, {"@type": "Question", "name": "把一筆案子拆成兩筆付款，可以少扣嗎？", "acceptedAnswer": {"@type": "Answer", "text": "同一筆費用刻意拆單，可能被稅務系統勾稽，公司和接案者都有補稅、罰款的風險。依合約進度分期付款才是合規的做法。"}}, {"@type": "Question", "name": "被預扣的稅就是最終稅額嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不是，預扣只是預繳。隔年 5 月結算申報時，多繳的可以退，少繳的要補。二代健保補充保費則是費用，不會退還。"}}]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231F5C4D'/%3E%3Crect x='14' y='14' width='36' height='36' rx='6' fill='none' stroke='%23E3F0EB' stroke-width='3.5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='serif' font-weight='900' font-size='22' fill='%23FFFFFF'%3E%E5%8B%9E%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F5F3;--sf:#fff;--ink:#17211F;--mu:#5A6A66;--ln:#D8E0DC;--ac:#1F5C4D;--acb:#E3F0EB;--seal:#B9302A;--warn:#8A5A00;--warnb:#FFF4D9;--tip:#164E63;--tipb:#E0F2FE;
+--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;--serif:"Noto Serif TC","Songti TC",serif;
+color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1514;--sf:#172120;--ink:#E7EFEC;--mu:#93A5A0;--ln:#2A3A37;--ac:#74C7AD;--acb:#1B3029;--seal:#E2625B;--warn:#F0C268;--warnb:#2E2612;--tip:#7DD3FC;--tipb:#122A38;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1514;--sf:#172120;--ink:#E7EFEC;--mu:#93A5A0;--ln:#2A3A37;--ac:#74C7AD;--acb:#1B3029;--seal:#E2625B;--warn:#F0C268;--warnb:#2E2612;--tip:#7DD3FC;--tipb:#122A38;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 var(--sans);-webkit-text-size-adjust:100%;transition:background .2s,color .2s}
+.wrap{max-width:1120px;margin:0 auto;padding:18px 20px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--ln);margin-bottom:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink);text-decoration:none;font-size:15px}
+.brand i{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;background:var(--ac);color:var(--bg);font-style:normal;font-family:var(--serif);font-weight:900;font-size:14px}
+.navacts{display:flex;align-items:center;gap:10px}
+.navlink{color:var(--ac);text-decoration:none;font-size:14.5px;font-weight:500;padding:5px 10px;border-radius:8px}
+.navlink:hover{background:var(--acb)}
+.tbtn{background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:99px;padding:5px 12px;font:500 13.5px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.tbtn:hover{border-color:var(--ac);color:var(--ac)}
+header{padding:6px 0 24px}
+h1{font:900 clamp(30px,5.2vw,46px)/1.2 var(--serif);margin:0 0 10px;letter-spacing:.01em}
+header p{margin:0;max-width:38em;color:var(--mu);font-size:16.5px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:24px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:24px}
+fieldset{border:0;margin:0 0 20px;padding:0;min-width:0}
+legend,.lb{font-weight:700;font-size:15px;margin-bottom:8px;padding:0}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.types label,.seg label{position:relative;display:block;cursor:pointer}
+input[type=radio]{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.opt{display:block;border:1.5px solid var(--ln);border-radius:10px;padding:10px 12px;height:100%;transition:border-color .15s,background .15s}
+.opt b{display:block;font-size:15px}.opt small{color:var(--mu);font-size:13px;line-height:1.4;display:block}
+input[type=radio]:checked+.opt{border-color:var(--ac);background:var(--acb)}
+input[type=radio]:focus-visible+.opt,input:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+.seg .opt{text-align:center;padding:9px 8px;font-size:15px}
+.amt{display:flex;align-items:center;border:1.5px solid var(--ln);border-radius:10px;background:var(--bg);padding:0 14px;transition:border-color .15s}
+.amt:focus-within{border-color:var(--ac)}
+.amt span{color:var(--mu);font-size:18px;margin-right:8px}
+.amt input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:700 28px/1.4 var(--sans);font-variant-numeric:tabular-nums;padding:10px 0;outline:0}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;cursor:pointer}
+.chk input{margin-top:5px;width:17px;height:17px;accent-color:var(--ac);flex-shrink:0}
+.chk small{display:block;color:var(--mu);font-size:13px;line-height:1.5}
+.res{margin-top:22px;border-top:1px solid var(--ln);padding-top:18px}
+.big{font:900 clamp(34px,6vw,46px)/1.15 var(--serif);font-variant-numeric:tabular-nums;color:var(--ac);margin:2px 0 12px}
+.row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px dashed var(--ln);font-variant-numeric:tabular-nums}
+.row small{display:block;color:var(--mu);font-size:13px;line-height:1.45}
+.row em{font-style:normal;font-weight:700;white-space:nowrap}
+.note{margin-top:14px;background:var(--warnb);color:var(--warn);border-radius:10px;padding:11px 14px;font-size:14px;line-height:1.55;display:none}
+.tip{margin-top:12px;background:var(--tipb);color:var(--tip);border-radius:10px;padding:11px 14px;font-size:14px;line-height:1.55;display:none}
+.tip button{background:var(--tip);color:var(--bg);border:0;border-radius:6px;padding:3px 10px;font-size:13px;margin-left:6px;cursor:pointer;vertical-align:baseline}
+.slipwrap{position:sticky;top:16px}
+@media(max-width:860px){.slipwrap{position:static}}
+#slip{position:relative;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:26px 24px 22px;overflow:hidden}
+#slip::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--ac)}
+#slip h2{font:900 24px/1.3 var(--serif);text-align:center;margin:4px 0 4px;letter-spacing:.3em}
+#slip .sub{text-align:center;color:var(--mu);font-size:13.5px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;gap:6px}
+#slip .sub input{border:0;border-bottom:1px dashed var(--ln);background:transparent;color:var(--mu);font:inherit;text-align:center;width:13.5em;padding:1px 4px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:520px){.fgrid{grid-template-columns:1fr}}
+.f{display:grid;grid-template-columns:5.2em 1fr;gap:8px;align-items:baseline;border-bottom:1px solid var(--ln);padding:7px 0;font-size:14.5px}
+.f.full{grid-column:1 / -1}
+.f span{color:var(--mu);font-size:13.5px;white-space:nowrap}
+.f b{font-variant-numeric:tabular-nums;min-height:1.6em;word-break:break-all}
+.f input{border:0;background:transparent;font:inherit;color:var(--ink);width:100%;padding:0;outline:0;border-radius:4px}
+.f input::placeholder{color:var(--mu);opacity:.65;font-size:13.5px}
+.netbox{margin-top:12px;background:var(--acb);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.netbox .nl{font-size:14px;font-weight:700;color:var(--ink)}
+.netbox .nv{font:900 20px var(--serif);color:var(--ac);font-variant-numeric:tabular-nums}
+.netbox .nc{width:100%;font-size:13.5px;color:var(--mu);border-top:1px dashed var(--ln);padding-top:6px;margin-top:2px}
+.sign{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;font-size:13px;color:var(--mu)}
+.sign div{border-top:1px solid var(--ink);padding-top:6px;display:flex;justify-content:space-between}
+.slipopts{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:13.5px;color:var(--mu)}
+.slipopts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.slipopts input[type=checkbox]{accent-color:var(--ac);width:15px;height:15px}
+.clrlink{background:none;border:0;color:var(--mu);text-decoration:underline;font:inherit;padding:0;cursor:pointer}
+.clrlink:hover{color:var(--seal)}
+.acts{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-top:12px}
+@media(max-width:520px){.acts{grid-template-columns:1fr}}
+button.pri{font:700 14.5px var(--sans);border:1.5px solid var(--ac);background:var(--ac);color:var(--bg);border-radius:10px;padding:10px 14px;cursor:pointer}
+button.sec{font:700 14.5px var(--sans);border:1.5px solid var(--ac);background:transparent;color:var(--ac);border-radius:10px;padding:10px 12px;cursor:pointer}
+button.sec:hover{background:var(--acb)}
+details{margin-top:14px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:15px 20px}
+summary{cursor:pointer;font-weight:700}
+details p,details li{color:var(--mu);font-size:14.5px}
+details ul{padding-left:1.2em;margin:8px 0 0}
+footer{margin-top:34px;padding-top:20px;border-top:1px solid var(--ln);color:var(--mu);font-size:13.5px;line-height:1.75}
+footer a{color:var(--ac)}
+.tr{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.tr span{border:1px solid var(--ln);background:var(--sf);border-radius:99px;padding:3px 12px;font-size:13px;color:var(--mu)}
+.exs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;font-size:13.5px;color:var(--mu)}
+button.ex{background:transparent;color:var(--ink);border:1px solid var(--ln);border-radius:99px;padding:3px 11px;font:500 13px var(--sans);font-variant-numeric:tabular-nums;cursor:pointer}
+button.ex:hover{border-color:var(--ac);color:var(--ac)}
+.bar{display:flex;height:11px;border-radius:99px;overflow:hidden;background:var(--ln);margin:0 0 8px;transition:opacity .2s;opacity:0}
+.bar i{display:block;height:100%;transition:width .35s}#b1{background:var(--ac)}#b2{background:var(--seal)}#b3{background:var(--warn)}
+.leg{font-size:13px;color:var(--mu);margin-bottom:10px;font-variant-numeric:tabular-nums}
+.secblock{margin-top:42px}.secblock h2{font:900 25px/1.3 var(--serif);margin:0 0 6px}.secblock>p{margin:0 0 14px;color:var(--mu)}
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.ggrid{grid-template-columns:1fr}}
+.gcard{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px 22px;text-decoration:none;color:var(--ink);transition:border-color .15s,background .15s}
+.gcard:hover{border-color:var(--ac);background:var(--acb)}
+.gcard b{display:block;font-size:17px;color:var(--ac);margin-bottom:4px}
+.gcard span{display:block;font-size:14.5px;color:var(--mu);line-height:1.6}
+.f select{border:0;background:transparent;font:inherit;color:var(--ink);width:100%;padding:0;outline:0}
+details.cv svg{width:100%;height:auto;display:block;margin-top:10px}details.cv p{margin:8px 0 0;font-size:13.5px}
+.bt textarea{width:100%;min-height:120px;border:1.5px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--ink);font:500 15px/1.7 var(--sans);padding:10px 12px;resize:vertical}
+.btw{overflow-x:auto;border:1px solid var(--ln);border-radius:12px;margin-top:14px}.btw table{border-collapse:collapse;width:100%;min-width:460px;font-variant-numeric:tabular-nums;font-size:14.5px}
+.btw th,.btw td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--ln)}.btw th:first-child,.btw td:first-child{text-align:left}.btw thead th{background:var(--acb)}.btw tfoot td{font-weight:700;border-bottom:0}
+.btacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btacts button{width:auto}
+@page{margin:14mm}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--sf:#fff;--ink:#111;--mu:#444;--ln:#bbb;--ac:#1F5C4D;--acb:#F3F7F5;--seal:#B9302A;color-scheme:light}
+  body{background:#fff!important;color:#111!important}
+  body *{visibility:hidden}
+  #slip,#slip *{visibility:visible}
+  #slip{position:absolute;left:0;top:0;width:100%;border:1.5px solid #222!important;border-radius:6px!important;padding:24px!important;box-shadow:none!important}
+  #slip::before{display:none}
+  #slip input::placeholder{color:transparent!important}
+  #slip .sub input{border-bottom:0!important}
+  .slipwrap{position:static}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="topbar" aria-label="主導覽">
+  <a class="brand" href="index.html"><i>勞</i><span>勞報單試算</span></a>
+  <div class="navacts">
+    <a class="navlink" href="article-1-quote-net-pay.html">接案報價指南</a>
+    <button type="button" class="tbtn" id="themeBtn" aria-label="切換深淺色主題">🌙 深色</button>
+  </div>
+</nav>
+
+<header>
+<h1>勞報單試算</h1>
+<p>接案報價、發包開單，三秒算清楚：要扣多少稅、多少健保補充保費、實際入帳多少，並直接產生含中文大寫金額的可列印勞務報酬單。</p>
+<div class="tr"><span>依 115 年度規定</span><span>免註冊，金額與個資不會離開瀏覽器</span><span>支援正算與反推報價</span><span>A4 列印／存成 PDF</span><span>批次試算與 CSV 匯出</span></div>
+</header>
+
+<div class="grid">
+<section class="card" aria-label="試算條件">
+<fieldset><legend>所得類別</legend>
+<div class="types">
+<label><input type="radio" name="t" value="9A" checked><span class="opt"><b>9A 執行業務</b><small>設計、翻譯、工程等專業勞務</small></span></label>
+<label><input type="radio" name="t" value="9B"><span class="opt"><b>9B 稿費・講演</b><small>稿費、版稅、單次講演費</small></span></label>
+<label><input type="radio" name="t" value="50"><span class="opt"><b>50 兼職薪資</b><small>有僱傭關係的兼職、臨時工</small></span></label>
+<label><input type="radio" name="t" value="92"><span class="opt"><b>92 其他所得</b><small>不屬於以上類別</small></span></label>
+</div></fieldset>
+
+<fieldset><legend>領款人身分</legend>
+<div class="seg">
+<label><input type="radio" name="r" value="1" checked><span class="opt">境內居住者</span></label>
+<label><input type="radio" name="r" value="0"><span class="opt">非居住者</span></label>
+</div>
+<small style="color:var(--mu);font-size:13px;display:block;margin-top:6px">居住者：在台有住所並經常居住，或同一年度在台居留滿 183 天。</small>
+</fieldset>
+
+<fieldset><legend>金額怎麼算</legend>
+<div class="seg">
+<label><input type="radio" name="m" value="g" checked><span class="opt">已知給付總額</span></label>
+<label><input type="radio" name="m" value="n"><span class="opt">想實拿這個數</span></label>
+</div></fieldset>
+
+<div class="lb" id="al">給付總額</div>
+<div class="amt"><span>NT$</span><input id="amt" inputmode="numeric" autocomplete="off" aria-labelledby="al" placeholder="30,000"></div>
+<div class="exs">試試看：<button type="button" class="ex" data-v="5000">5,000</button><button type="button" class="ex" data-v="20000">20,000</button><button type="button" class="ex" data-v="20010">20,010</button><button type="button" class="ex" data-v="30000">30,000</button><button type="button" class="ex" data-v="100000">100,000</button></div>
+
+<label class="chk" style="margin-top:16px"><input type="checkbox" id="un"><span>領款人有加保職業工會，並提供在保證明<small>符合時免扣 2.11% 補充保費（兼職薪資、執行業務、稿費適用）</small></span></label>
+
+<div class="res" aria-live="polite">
+<div class="lb" id="rl">實領金額</div>
+<div class="big" id="net">—</div><div class="bar" id="bar" aria-hidden="true"><i id="b1"></i><i id="b2"></i><i id="b3"></i></div><div class="leg" id="leg"></div>
+<div class="row"><div>給付總額<small id="gn"></small></div><em id="gross">—</em></div>
+<div class="row"><div>代扣所得稅<small id="tn"></small></div><em id="tax">—</em></div>
+<div class="row"><div>二代健保補充保費<small id="hn"></small></div><em id="nhi">—</em></div>
+<div class="note" id="warn"></div>
+<div class="tip" id="cliffTip"></div>
+<details class="cv"><summary>看實領曲線：為什麼金額會「跳水」</summary><svg id="cv" viewBox="0 0 320 150" role="img" aria-label="給付總額與實領金額關係圖"></svg><p>紅點是你目前的金額。曲線在 20,000 元與 20,010 元之間往下掉，是因為所得稅與補充保費的起扣點。</p></details>
+</div>
+</section>
+
+<aside class="slipwrap">
+<div id="slip">
+<h2>勞務報酬單</h2>
+<div class="sub">填發日期：<input id="dt" aria-label="填發日期"></div>
+<div class="fgrid">
+  <div class="f"><span>付款單位</span><input id="payer" placeholder="公司或單位名稱" aria-label="付款單位"></div>
+  <div class="f"><span>統一編號</span><input id="taxid" placeholder="選填" aria-label="統一編號"></div>
+  <div class="f"><span>領款人</span><input id="payee" placeholder="真實姓名" aria-label="領款人"></div>
+  <div class="f"><span>身分證號</span><input id="idnum" placeholder="申報扣繳憑單用" aria-label="身分證字號"></div>
+  <div class="f full"><span>戶籍地址</span><input id="addr" placeholder="縣市鄉鎮區鄰里路街段巷弄號樓" aria-label="戶籍地址"></div>
+  <div class="f full"><span>匯款帳號</span><input id="bank" placeholder="銀行代碼＋分行＋帳號（選填）" aria-label="匯款帳號"></div>
+  <div class="f"><span>付款方式</span><select id="pay" aria-label="付款方式"><option>匯款</option><option>現金</option><option>支票</option></select></div>
+  <div class="f full"><span>勞務事由</span><input id="memo" placeholder="例如：2026 年 11 月官網視覺設計費" aria-label="勞務事由"></div>
+  <div class="f"><span>所得類別</span><b id="s-type"></b></div>
+  <div class="f"><span>給付總額</span><b id="s-gross">—</b></div>
+  <div class="f"><span>扣繳稅額</span><b id="s-tax">—</b></div>
+  <div class="f"><span>補充保費</span><b id="s-nhi">—</b></div>
+</div>
+<div class="netbox">
+  <span class="nl">實領金額（淨額）</span>
+  <span class="nv" id="s-net">—</span>
+  <div class="nc">新台幣大寫：<b id="s-chi">—</b></div>
+</div>
+<div class="sign"><div><span>領款人簽章</span><span>（請附身分證正反面影本）</span></div><div><span>付款單位經手／會計</span></div></div>
+</div>
+
+<div class="slipopts">
+  <label><input type="checkbox" id="saveProfile"> 記住領款人姓名（身分證與帳號不儲存）</label>
+  <button type="button" class="clrlink" id="clearSlip">清空欄位</button>
+</div>
+
+<div class="acts">
+  <button type="button" class="pri" id="pr">列印／存成 PDF</button>
+  <button type="button" class="sec" id="cp">複製試算明細</button>
+  <button type="button" class="sec" id="cpl">複製分享連結</button>
+  <button type="button" class="sec" id="cpq">複製給客戶的報價說明</button>
+</div>
+</aside>
+</div>
+
+<details style="margin-top:26px">
+<summary>計算規則與資料來源（115 年度標準）</summary>
+<ul>
+<li>9A、9B：居住者單次給付達 20,010 元，扣 10%；非居住者扣 20%（9B 單次 5,000 元以下免扣）。</li>
+<li>50 兼職薪資：居住者單次達 90,501 元（115 年度），扣 5%；非居住者全月給付 44,250 元以下扣 6%，超過扣 18%。</li>
+<li>92 其他所得：居住者免扣繳，但仍須申報。</li>
+<li>二代健保補充保費 2.11%：9A、9B 單次達 20,000 元；兼職薪資達基本工資（29,500 元）。扣繳稅額元以下捨去，補充保費四捨五入。</li>
+<li>非居住者的補充保費依個案而定，本工具不計算，請向健保署確認。9B 每年 18 萬免稅額在隔年報稅時處理，不影響當次扣繳。</li>
+</ul>
+</details>
+
+<section class="secblock bt" id="batch"><h2>批次試算：一次算多位接案者</h2><p>每行一位，格式「姓名,金額」。套用上方選擇的所得類別、身分與工會設定，結果可複製到 Excel 或下載 CSV。</p>
+<div class="card"><textarea id="bt" aria-label="批次輸入" placeholder="王小明,30000&#10;李小華,45000&#10;陳大文,18000"></textarea>
+<div class="btacts"><button type="button" class="pri" id="btRun">計算</button></div><div id="btOut"></div></div></section>
+
+<section class="secblock"><h2>常見問題</h2><p>報價、開單前最常被問到的六件事。</p>
+<details><summary>勞報單是什麼？</summary><p>公司付款給無法開發票的個人（自由工作者、外包人員、兼職人員）時，用來記錄給付金額、扣繳稅額與補充保費的憑證。公司靠它列報費用，領款人靠它報稅。</p></details>
+<details><summary>9A 和 9B 要怎麼選？</summary><p>9A 是憑專業技能獨立接案，例如設計、翻譯、工程；9B 是稿費、版稅、單次講演費等。9B 在隔年報稅時有每年 18 萬元免稅額，但類別必須依實際性質認定，不能為了節稅亂填，被查核到可能要補稅。</p></details>
+<details><summary>為什麼起扣點是 20,010 元，不是 20,000 元？</summary><p>規定是應扣繳稅額不超過 2,000 元可免扣。給付 20,000 元時稅額剛好 2,000 元，免扣；到 20,010 元稅額是 2,001 元，就必須扣。補充保費的門檻另外計算，是 20,000 元。所以在這個金額附近，多收 10 元實領可能反而變少，上面的範例按鈕可以直接看到差別。</p></details>
+<details><summary>報價和實領差很多，怎麼跟對方談？</summary><p>報價時就講清楚是含稅還是未稅。如果你想實拿固定金額，把上方改成「想實拿這個數」，工具會反推公司要開多少給付額，並可直接複製分享連結傳給客戶確認。</p></details>
+<details><summary>把一筆案子拆成兩筆付款，可以少扣嗎？</summary><p>同一筆費用刻意拆單，可能被稅務系統勾稽，公司和接案者都有補稅、罰款的風險。依合約進度分期付款才是合規的做法。</p></details>
+<details><summary>被預扣的稅就是最終稅額嗎？</summary><p>不是，預扣只是預繳。隔年 5 月結算申報時，多繳的可以退，少繳的要補。二代健保補充保費則是費用，不會退還。</p></details>
+</section>
+
+<section class="secblock"><h2>接案報價與稅務指南</h2><p>實務報價、所得類別認定與合約常見陷阱整理。</p>
+<div class="ggrid">
+<a class="gcard" href="article-1-quote-net-pay.html"><b>接案報價要含稅還是未稅？想實拿 3 萬，要報多少 →</b><span>用 115 年度規則算給你看：想實拿 3 萬、5 萬、8 萬的精確報價反推，附工會免扣對照表與合約必寫三句話範本。</span></a>
+<a class="gcard" href="article-2-9a-vs-9b.html"><b>9A 執行業務與 9B 稿費差在哪？開勞報單別填錯 →</b><span>設計、寫文、演講與企業內訓該選哪一種？一次看懂 9B 每年 18 萬免稅額門檻與當次預扣規則。</span></a>
+</div>
+</section>
+
+<footer>
+資料來源：財政部電子申報繳稅服務網（<a href="https://www.etax.nat.gov.tw" target="_blank" rel="noopener">etax.nat.gov.tw</a>）及各機關公布之 115 年度扣繳簡表，規則核對日 2026 年 11 月 22 日。<br>
+隱私聲明：所有金額試算與領款人欄位資料皆僅在您的瀏覽器本機運行與儲存，不會傳送至任何伺服器。<br>
+本工具僅供試算，不構成稅務意見。實際扣繳請以稅務機關與健保署最新公告為準；門檻與費率每年可能調整。
+</footer>
+</div>
+
+<script>
+(function(){
+var LS={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+var $=function(s){return document.querySelector(s)},BASE=29500,T50=90501,
+N={"9A":"9A 執行業務所得","9B":"9B 稿費・講演費","50":"50 兼職薪資所得","92":"92 其他所得"};
+
+/* 深淺色主題切換 */
+var root=document.documentElement,tbtn=$("#themeBtn");
+function isDark(){
+  var th=root.getAttribute("data-theme");
+  if(th)return th==="dark";
+  return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+function syncThemeBtn(){tbtn.textContent=isDark()?"☀️ 淺色":"🌙 深色"}
+var savedTheme=LS.get("ls_theme");
+if(savedTheme==="dark"||savedTheme==="light")root.setAttribute("data-theme",savedTheme);
+syncThemeBtn();
+tbtn.onclick=function(){
+  var next=isDark()?"light":"dark";
+  root.setAttribute("data-theme",next);
+  LS.set("ls_theme",next);
+  syncThemeBtn();
+};
+
+/* 數字轉新台幣中文大寫 */
+function toChi(num){
+  if(!num||num<=0)return "零元整";
+  var digits=["零","壹","貳","參","肆","伍","陸","柒","捌","玖"],
+      units=["","拾","佰","仟"],
+      bigUnits=["","萬","億","兆"],
+      str=Math.floor(num).toString(),
+      groups=[],res="",zeroFlag=false;
+  while(str.length>0){groups.unshift(str.slice(-4));str=str.slice(0,-4)}
+  for(var i=0;i<groups.length;i++){
+    var g=groups[i],gRes="",gZero=false;
+    for(var j=0;j<g.length;j++){
+      var d=parseInt(g[j],10),pos=g.length-1-j;
+      if(d===0){gZero=true}
+      else{
+        if(zeroFlag||gZero){gRes+="零";zeroFlag=false;gZero=false}
+        gRes+=digits[d]+units[pos];
+      }
+    }
+    if(gRes){res+=gRes+bigUnits[groups.length-1-i]}
+    else if(res){zeroFlag=true}
+  }
+  return res+"元整";
+}
+
+function fmt(n){return "NT$ "+n.toLocaleString("zh-TW")}
+function val(n){return document.querySelector('input[name='+n+']:checked').value}
+
+function calc(t,res,un,g){
+ var tax=0,tn="",nhi=0,hn="";
+ if(res){
+  if(t==="9A"||t==="9B"){tax=g>=20010?Math.floor(g/10):0;tn=tax?"10%，單次達 20,010 元起扣":"未達 20,010 元，免扣"}
+  else if(t==="50"){tax=g>=T50?Math.floor(g*5/100):0;tn=tax?"5%，單次達 "+T50.toLocaleString()+" 元起扣":"未達 "+T50.toLocaleString()+" 元，免扣"}
+  else{tn="居住者免扣繳，仍須申報"}
+  if(t==="92"){hn="其他所得不扣補充保費"}
+  else if(un){hn="有職業工會在保證明，免扣"}
+  else{var th=t==="50"?BASE:20000;nhi=g>=th?Math.round(g*211/10000):0;hn=nhi?"2.11%，單次達 "+th.toLocaleString()+" 元起扣":"未達 "+th.toLocaleString()+" 元，免扣"}
+ }else{
+  if(t==="9A"||t==="92"){tax=Math.floor(g/5);tn="20%，非居住者"}
+  else if(t==="9B"){tax=g>5000?Math.floor(g/5):0;tn=tax?"20%，非居住者":"5,000 元以下免扣"}
+  else{var r=g<=44250?6:18;tax=Math.floor(g*r/100);tn=r+"%，非居住者薪資"}
+  hn="非居住者請另行確認"
+ }
+ return{tax:tax,nhi:nhi,tn:tn,hn:hn,net:g-tax-nhi}
+}
+
+var inp=$("#amt");
+function run(){
+ var t=val("t"),res=val("r")==="1",m=val("m"),un=$("#un").checked,
+ a=parseInt(inp.value.replace(/\D/g,""),10)||0,g=a,w=$("#warn"),tip=$("#cliffTip");
+ $("#al").textContent=m==="g"?"給付總額":"希望實拿金額";
+ $("#s-type").textContent=N[t];
+ $("#un").closest("label").style.opacity=(t==="92"||!res)?".45":"1";
+ w.style.display="none";
+ tip.style.display="none";
+
+ if(!a){
+  ["net","gross","tax","nhi","s-gross","s-tax","s-nhi","s-net","s-chi"].forEach(function(i){$("#"+i).textContent="—"});
+  $("#bar").style.opacity=0;$("#leg").textContent="";
+  ["gn","tn","hn"].forEach(function(i){$("#"+i).textContent=""});
+  window._r=null;$("#cv").innerHTML="";
+  return;
+ }
+
+ var c=calc(t,res,un,g);
+ if(m==="n"){
+  var max=Math.ceil(a*1.4)+100,found=false;
+  for(g=a;g<=max;g++){c=calc(t,res,un,g);if(c.net>=a){found=true;break}}
+  $("#gn").textContent="為實拿 "+fmt(a)+" 反推";
+  if(found&&c.net>a){w.textContent="剛好實拿 "+fmt(a)+" 的給付額不存在（起扣點造成金額跳動），已顯示最接近且不少於目標的結果，實領 "+fmt(c.net)+"。";w.style.display="block"}
+ }else $("#gn").textContent="";
+
+ if(!res&&t!=="92"){w.textContent="非居住者的二代健保補充保費未計入，請向健保署確認是否須扣。";w.style.display="block"}
+
+ /* 20,000 起扣點陷阱智慧提醒 */
+ if(res&&(t==="9A"||t==="9B")&&g>20000){
+  var base20k=calc(t,res,un,20000);
+  if(c.net<base20k.net){
+   tip.innerHTML="💡 <b>報價起扣點提醒：</b>目前報價 "+fmt(g)+" 跨過 20,010 元起扣門檻，實領反而比報價 NT$ 20,000（實領 "+fmt(base20k.net)+"）更少。<button type='button' id='fix20k'>改算 20,000 元</button>";
+   tip.style.display="block";
+   $("#fix20k").onclick=function(){
+    document.querySelector('input[name=m][value=g]').checked=true;
+    inp.value="20,000";
+    run();
+   };
+  }
+ }
+
+ $("#net").textContent=fmt(c.net);$("#gross").textContent=fmt(g);
+ $("#tax").textContent="− "+fmt(c.tax);$("#nhi").textContent="− "+fmt(c.nhi);
+ $("#tn").textContent=c.tn;$("#hn").textContent=c.hn;
+ $("#s-gross").textContent=fmt(g);$("#s-tax").textContent=fmt(c.tax);$("#s-nhi").textContent=fmt(c.nhi);
+ $("#s-net").textContent=fmt(c.net);$("#s-chi").textContent=toChi(c.net);
+ var p=function(x){return Math.round(x/g*1000)/10};
+ $("#b1").style.width=p(c.net)+"%";$("#b2").style.width=p(c.tax)+"%";$("#b3").style.width=p(c.nhi)+"%";$("#bar").style.opacity=1;
+ $("#leg").textContent="實領 "+p(c.net)+"%　所得稅 "+p(c.tax)+"%　補充保費 "+p(c.nhi)+"%";
+ drawCurve(t,res,un,g);window._r={t:t,tName:N[t],r:res?"1":"0",m:m,un:un?"1":"0",a:a,g:g,tax:c.tax,nhi:c.nhi,net:c.net,chi:toChi(c.net)};
+}
+
+inp.addEventListener("input",function(){var d=inp.value.replace(/\D/g,"");inp.value=d?parseInt(d,10).toLocaleString("zh-TW"):"";run()});
+document.querySelectorAll("input[type=radio],#un").forEach(function(e){e.addEventListener("change",run)});
+document.querySelectorAll(".ex").forEach(function(b){b.onclick=function(){inp.value=Number(b.dataset.v).toLocaleString("zh-TW");run()}});
+
+/* 本機領款人資料儲存 */
+var profileFields=["payee"],allSlipFields=["payer","taxid","payee","idnum","addr","bank","memo"];
+var saveChk=$("#saveProfile");
+if(LS.get("ls_save_profile")==="1"){
+  saveChk.checked=true;
+  profileFields.forEach(function(id){var v=LS.get("ls_f_"+id);if(v)$("#"+id).value=v});
+}
+function persistProfile(){
+  if(saveChk.checked){
+    LS.set("ls_save_profile","1");
+    profileFields.forEach(function(id){LS.set("ls_f_"+id,$("#"+id).value)});
+  }else{
+    LS.del("ls_save_profile");
+    profileFields.forEach(function(id){LS.del("ls_f_"+id)});
+  }
+}
+saveChk.onchange=persistProfile;
+profileFields.forEach(function(id){$("#"+id).addEventListener("input",persistProfile)});
+$("#clearSlip").onclick=function(){
+  allSlipFields.forEach(function(id){$("#"+id).value=""});
+  saveChk.checked=false;
+  persistProfile();
+};
+
+/* 列印與複製按鈕 */
+$("#pr").onclick=function(){window.print()};
+function flashBtn(btn,msg,orig){btn.textContent=msg;setTimeout(function(){btn.textContent=orig},1800)}
+function copyText(text,btn,orig){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){flashBtn(btn,"已複製 ✓",orig)},function(){fallbackCopy(text,btn,orig)});
+  }else{fallbackCopy(text,btn,orig)}
+}
+function fallbackCopy(text,btn,orig){
+  var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");flashBtn(btn,"已複製 ✓",orig)}catch(e){flashBtn(btn,"請手動複製",orig)}
+  document.body.removeChild(ta);
+}
+
+$("#cp").onclick=function(){
+  var r=window._r;if(!r)return;
+  var s="【勞報單試算明細】\n所得類別："+r.tName+"\n給付總額："+fmt(r.g)+"\n代扣所得稅："+fmt(r.tax)+"\n二代健保補充保費："+fmt(r.nhi)+"\n實領金額："+fmt(r.net)+"（"+r.chi+"）";
+  copyText(s,this,"複製試算明細");
+};
+
+$("#cpl").onclick=function(){
+  var r=window._r;
+  var url=new URL(window.location.href.split("?")[0]);
+  if(r){
+    url.searchParams.set("t",r.t);
+    url.searchParams.set("r",r.r);
+    url.searchParams.set("m",r.m);
+    url.searchParams.set("a",r.a);
+    if(r.un==="1")url.searchParams.set("un","1");
+  }
+  copyText(url.toString(),this,"複製分享連結");
+};
+
+/* 讀取 URL 參數預填（方便文章直接跳轉試算） */
+var params=new URLSearchParams(window.location.search);
+if(params.get("t")&&N[params.get("t")]){var rt=document.querySelector('input[name=t][value="'+params.get("t")+'"]');if(rt)rt.checked=true}
+if(params.get("r")==="0"||params.get("r")==="1"){var rr=document.querySelector('input[name=r][value="'+params.get("r")+'"]');if(rr)rr.checked=true}
+if(params.get("m")==="n"||params.get("m")==="g"){var rm=document.querySelector('input[name=m][value="'+params.get("m")+'"]');if(rm)rm.checked=true}
+if(params.get("un")==="1")$("#un").checked=true;
+if(params.get("a")){var pa=parseInt(params.get("a").replace(/\D/g,""),10);if(pa>0)inp.value=pa.toLocaleString("zh-TW")}
+
+
+function drawCurve(t,res,un,g){var W=320,H=150,P=8,mx=Math.max(60000,Math.ceil(g*1.15/10000)*10000),xs=[],i;
+ for(i=0;i<=160;i++)xs.push(Math.round(mx*i/160));
+ [19999,20000,20009,20010,T50-1,T50].forEach(function(x){if(x<=mx)xs.push(x)});
+ xs.sort(function(a,b){return a-b});
+ var ys=xs.map(function(x){return calc(t,res,un,x).net}),my=Math.max.apply(null,ys)||1;
+ function X(x){return P+(W-2*P)*x/mx}function Y(y){return H-P-(H-2*P)*y/my}
+ var d="";xs.forEach(function(x,k){d+=(k?"L":"M")+X(x).toFixed(1)+","+Y(ys[k]).toFixed(1)});
+ var c=calc(t,res,un,g).net;
+ $("#cv").innerHTML='<line x1="'+P+'" y1="'+(H-P)+'" x2="'+(W-P)+'" y2="'+(H-P)+'" style="stroke:var(--ln)"/><path d="'+d+'" style="fill:none;stroke:var(--ac);stroke-width:2"/><circle cx="'+X(g).toFixed(1)+'" cy="'+Y(c).toFixed(1)+'" r="5" style="fill:var(--seal)"/><text x="'+P+'" y="12" font-size="9" style="fill:var(--mu)">實領</text><text x="'+(W-P)+'" y="'+(H-12)+'" font-size="9" text-anchor="end" style="fill:var(--mu)">給付總額 0 至 '+mx.toLocaleString()+'</text>';
+}
+$("#pay").onchange=function(){};
+$("#cpq").onclick=function(){var r=window._r;if(!r)return;
+ var s="報價說明\n所得類別："+r.tName+"\n給付總額："+fmt(r.g)+"\n代扣所得稅："+fmt(r.tax)+"\n二代健保補充保費："+fmt(r.nhi)+"\n實領金額："+fmt(r.net)+"\n※ 依 115 年度規則試算，實際以付款單位扣繳為準。";
+ copyText(s,this,"複製給客戶的報價說明")};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var rowsB=[],HB=["姓名","給付總額","所得稅","補充保費","實領金額"];
+$("#btRun").onclick=function(){
+ var t=val("t"),res=val("r")==="1",un=$("#un").checked,tot=[0,0,0,0],bad=0;rowsB=[];
+ $("#bt").value.split(/\r?\n/).forEach(function(L){L=L.trim();if(!L)return;
+  var m=L.match(/^(.*?)[,\t\s]+([\d,]+)$/)||L.match(/^()([\d,]+)$/);
+  var g=m?parseInt(m[2].replace(/,/g,""),10):0;if(!g){bad++;return}
+  var c=calc(t,res,un,g);rowsB.push([m[1]||"—",g,c.tax,c.nhi,c.net]);
+  tot[0]+=g;tot[1]+=c.tax;tot[2]+=c.nhi;tot[3]+=c.net});
+ var o=$("#btOut");
+ if(!rowsB.length){o.innerHTML='<p style="color:var(--warn)">沒有讀到有效的資料，請用「姓名,金額」格式，每行一位。</p>';return}
+ var h='<div class="btw"><table><thead><tr>'+HB.map(function(x){return"<th>"+x+"</th>"}).join("")+"</tr></thead><tbody>"+
+  rowsB.map(function(r){return"<tr><td>"+esc(r[0])+"</td>"+r.slice(1).map(function(v){return"<td>"+v.toLocaleString("zh-TW")+"</td>"}).join("")+"</tr>"}).join("")+
+  '</tbody><tfoot><tr><td>合計（'+rowsB.length+' 人）</td>'+tot.map(function(v){return"<td>"+v.toLocaleString("zh-TW")+"</td>"}).join("")+"</tr></tfoot></table></div>"+
+  (bad?'<p style="color:var(--warn);font-size:13.5px">有 '+bad+' 行格式不符，已略過。</p>':"")+
+  '<div class="btacts"><button type="button" class="sec" id="btCp">複製表格（貼到 Excel）</button><button type="button" class="sec" id="btCsv">下載 CSV</button></div>';
+ o.innerHTML=h;
+ var all=[HB].concat(rowsB,[["合計"].concat(tot)]);
+ $("#btCp").onclick=function(){copyText(all.map(function(r){return r.join("\t")}).join("\n"),this,"複製表格（貼到 Excel）")};
+ $("#btCsv").onclick=function(){var csv="\ufeff"+all.map(function(r){return r.map(function(v){return'"'+String(v).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n");
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="勞報單批次試算.csv";document.body.appendChild(a);a.click();a.remove()};
+};
+
+var d=new Date();
+$("#dt").value="民國 "+(d.getFullYear()-1911)+" 年 "+(d.getMonth()+1)+" 月 "+d.getDate()+" 日";
+run();
+})();
+</script>
+</body>
+</html>

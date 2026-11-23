@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://labor-slip.tw-slip.workers.dev/sitemap.xml
